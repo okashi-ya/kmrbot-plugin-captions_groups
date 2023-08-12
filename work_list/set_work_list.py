@@ -13,8 +13,8 @@ from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 
 set_work_list = on_command(
     "设置工作表",
-    priority=5,
-    rule=to_me()
+    rule=to_me(),
+    priority=5
 )
 set_work_list.__doc__ = """设置工作表"""
 set_work_list.__help_type__ = None
