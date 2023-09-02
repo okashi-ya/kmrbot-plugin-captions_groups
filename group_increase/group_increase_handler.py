@@ -3,7 +3,7 @@ from typing import Union
 from nonebot import on_notice
 from nonebot.adapters.onebot.v11 import GroupIncreaseNoticeEvent
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
-from plugins.common_plugins_function, while_list_handle
+from plugins.common_plugins_function import while_list_handle
 from haruka_bot.utils import group_only
 from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 

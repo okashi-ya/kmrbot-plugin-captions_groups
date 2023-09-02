@@ -4,7 +4,7 @@ from nonebot import on_command
 from haruka_bot.utils import (
     group_only,
 )
-from plugins.common_plugins_function, while_list_handle
+from plugins.common_plugins_function import while_list_handle
 from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 
 
