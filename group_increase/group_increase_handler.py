@@ -15,14 +15,11 @@ group_increase_handler.handle()(group_only)
 @group_increase_handler.handle()
 async def _(event: Union[GroupIncreaseNoticeEvent]):
     """进群欢迎Handler"""
-    print("group_increase_handler start")
     welcome_content = await CaptionsGroupsDBUtils.get_welcome_content(
         type="group",
         type_id=event.group_id)
     if not welcome_content:
-        print("no welcome_content")
         await group_increase_handler.finish()
     else:
-        print("welcome_content ok")
         msg = MessageSegment.at(event.user_id) + Message("\n" + welcome_content)
         await group_increase_handler.finish(msg)
