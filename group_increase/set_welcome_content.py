@@ -8,7 +8,7 @@ from nonebot import on_command
 from haruka_bot.utils import (
     group_only,
 )
-from plugins.common_plugins_function import while_list_handle
+from plugins.common_plugins_function import white_list_handle
 from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 
 set_welcome_content = on_command(
@@ -19,7 +19,7 @@ set_welcome_content = on_command(
 set_welcome_content.__doc__ = """设置群欢迎内容"""
 set_welcome_content.__help_type__ = None
 
-set_welcome_content.handle()(while_list_handle("captions_groups"))
+set_welcome_content.handle()(white_list_handle("captions_groups"))
 set_welcome_content.handle()(group_only)
 
 

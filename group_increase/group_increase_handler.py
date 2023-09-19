@@ -3,12 +3,12 @@ from typing import Union
 from nonebot import on_notice
 from nonebot.adapters.onebot.v11 import GroupIncreaseNoticeEvent
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
-from plugins.common_plugins_function import while_list_handle
+from plugins.common_plugins_function import white_list_handle
 from haruka_bot.utils import group_only
 from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 
 group_increase_handler = on_notice(priority=5)
-group_increase_handler.handle()(while_list_handle("captions_groups"))
+group_increase_handler.handle()(white_list_handle("captions_groups"))
 group_increase_handler.handle()(group_only)
 
 

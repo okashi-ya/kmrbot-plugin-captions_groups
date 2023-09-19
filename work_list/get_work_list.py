@@ -4,7 +4,7 @@ from nonebot import on_command
 from haruka_bot.utils import (
     group_only,
 )
-from plugins.common_plugins_function import while_list_handle
+from plugins.common_plugins_function import white_list_handle
 from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
 
 
@@ -18,7 +18,7 @@ get_work_list = on_command(
 get_work_list.__doc__ = """工作表"""
 get_work_list.__help_type__ = None
 
-get_work_list.handle()(while_list_handle("captions_groups"))
+get_work_list.handle()(white_list_handle("captions_groups"))
 get_work_list.handle()(group_only)
 
 
