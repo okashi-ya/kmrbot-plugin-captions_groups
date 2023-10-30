@@ -1,12 +1,9 @@
-from nonebot.adapters.onebot.v11.event import GroupMessageEvent
-from nonebot.adapters.onebot.v11.message import Message
+from protocol_adapter.protocol_adapter import ProtocolAdapter
+from protocol_adapter.adapter_type import AdapterGroupMessageEvent
 from nonebot import on_command
-from haruka_bot.utils import (
-    group_only,
-)
 from plugins.common_plugins_function import white_list_handle
-from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
-
+from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
+from utils import group_only
 
 get_work_list = on_command(
     "工作表", aliases={
@@ -24,11 +21,11 @@ get_work_list.handle()(group_only)
 
 @get_work_list.handle()
 async def _(
-    event: GroupMessageEvent
+    event: AdapterGroupMessageEvent
 ):
-    work_list = await CaptionsGroupsDBUtils.get_work_list(
-        type="group",
-        type_id=event.group_id)
+    msg_type = ProtocolAdapter.get_msg_type(event)
+    msg_type_id = ProtocolAdapter.get_msg_type_id(event)
+    work_list = DBPluginsCaptionsGroupsInfo.get_work_list_by_msg_type_id(msg_type, msg_type_id)
     if not work_list:
         await get_work_list.finish("尚未设置工作表！")
     else:
@@ -39,5 +36,4 @@ async def _(
         }
         # 一个彩蛋
         pre_str = event_msg_extra_str.get(str(event.message), "")
-        msg = Message(pre_str + work_list)
-        await get_work_list.finish(msg)
+        await get_work_list.finish(pre_str + work_list)

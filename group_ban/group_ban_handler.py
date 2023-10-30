@@ -1,9 +1,8 @@
-from typing import Union
 from nonebot import on_notice
-from nonebot.adapters.onebot.v11 import Bot, Message
-from nonebot.adapters.onebot.v11 import GroupBanNoticeEvent
+from protocol_adapter.protocol_adapter import ProtocolAdapter
+from protocol_adapter.adapter_type import AdapterBot, AdapterGroupBanNoticeEvent
 from plugins.common_plugins_function import white_list_handle
-from haruka_bot.utils import group_only
+from utils import group_only
 
 group_ban_handler = on_notice(priority=5)
 group_ban_handler.handle()(white_list_handle("captions_groups"))
@@ -11,20 +10,15 @@ group_ban_handler.handle()(group_only)
 
 
 @group_ban_handler.handle()
-async def _(bot: Bot, event: Union[GroupBanNoticeEvent]):
+async def _(bot: AdapterBot, event: AdapterGroupBanNoticeEvent):
     """群禁言/解禁Handler"""
-
-    ban_operator_info = \
-        await bot.get_group_member_info(group_id=event.group_id, user_id=event.operator_id, no_cache=True)
-    ban_user_info = \
-        await bot.get_group_member_info(group_id=event.group_id, user_id=event.user_id, no_cache=True)
-
-    if event.sub_type == "ban":
-        ret_str = f"{ban_user_info.get('card', '')}（{event.user_id}）被" \
-                  f"{ban_operator_info.get('card', '')}（{event.operator_id}）" \
-                  f"塞了{event.duration}秒的口球"
+    ban_info = await ProtocolAdapter.Ban.get_ban_info(bot, event)
+    if ban_info["is_ban"]:
+        ret_str = f"{ban_info['ban_user_name']}（{ban_info['ban_user_id']}）被" \
+                  f"{ban_info['operator_user_name']}（{ban_info['operator_user_id']}）" \
+                  f"塞了{ban_info['duration']}秒的口球"
     else:
-        ret_str = f"{ban_operator_info.get('card', '')}（{event.operator_id}）取出了" \
-                  f"{ban_user_info.get('card', '')}（{event.user_id}）" \
+        ret_str = f"{ban_info['operator_user_name']}（{ban_info['operator_user_id']}）取出了" \
+                  f"{ban_info['ban_user_name']}（{ban_info['ban_user_id']}）" \
                   f"的口球"
-    await group_ban_handler.finish(ret_str)
+    await group_ban_handler.finish(ret_str, chatType=event.chatType, peerUin=event.peerUin)

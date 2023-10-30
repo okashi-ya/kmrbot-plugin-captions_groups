@@ -1,15 +1,13 @@
 import re
-from nonebot.adapters.onebot.v11.event import GroupMessageEvent
-from nonebot.adapters.onebot.v11.message import Message
+from protocol_adapter.protocol_adapter import ProtocolAdapter
+from protocol_adapter.adapter_type import AdapterGroupMessageEvent, AdapterMessage
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, ArgPlainText
 from nonebot import on_command
-from haruka_bot.utils import (
-    group_only,
-)
+from utils import group_only
 from plugins.common_plugins_function import white_list_handle
-from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
+from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
 
 set_work_list = on_command(
     "设置工作表",
@@ -25,7 +23,7 @@ set_work_list.handle()(group_only)
 
 async def handle_url(
     matcher: Matcher,
-    command_arg: Message = CommandArg(),
+    command_arg: AdapterMessage = CommandArg(),
 ):
     url = command_arg.extract_plain_text().strip()
     # 不是url就报错
@@ -38,18 +36,15 @@ set_work_list.handle()(handle_url)
 
 @set_work_list.handle()
 async def _(
-        event: GroupMessageEvent, 
+        event: AdapterGroupMessageEvent,
         url: str = ArgPlainText("url")
 ):
+    msg_type = ProtocolAdapter.get_msg_type(event)
+    msg_type_id = ProtocolAdapter.get_msg_type_id(event)
     ret_msg = ""
-    work_list = await CaptionsGroupsDBUtils.get_work_list(
-        type="group",
-        type_id=event.group_id)
+    work_list = DBPluginsCaptionsGroupsInfo.get_work_list_by_msg_type_id(msg_type, msg_type_id)
     if work_list:
         ret_msg = "【原工作表已被覆盖】\n"
-    await CaptionsGroupsDBUtils.set_work_list(
-        type="group",
-        type_id=event.group_id,
-        work_list=url)
+    DBPluginsCaptionsGroupsInfo.set_work_list(msg_type, msg_type_id, url)
     ret_msg += "已写入工作表"
     await set_work_list.finish(ret_msg)

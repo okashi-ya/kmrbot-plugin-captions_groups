@@ -1,15 +1,12 @@
-import re
-from nonebot.adapters.onebot.v11.event import GroupMessageEvent
-from nonebot.adapters.onebot.v11.message import Message
+from protocol_adapter.protocol_adapter import ProtocolAdapter
+from protocol_adapter.adapter_type import AdapterMessage, AdapterGroupMessageEvent
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, ArgPlainText
 from nonebot import on_command
-from haruka_bot.utils import (
-    group_only,
-)
+from utils import group_only
 from plugins.common_plugins_function import white_list_handle
-from ..db.captions_groups_db_utils import CaptionsGroupsDBUtils
+from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
 
 set_welcome_content = on_command(
     "设置群欢迎内容",
@@ -25,7 +22,7 @@ set_welcome_content.handle()(group_only)
 
 async def handle_content(
     matcher: Matcher,
-    command_arg: Message = CommandArg(),
+    command_arg: AdapterMessage = CommandArg(),
 ):
     matcher.set_arg("content", command_arg)
 set_welcome_content.handle()(handle_content)
@@ -33,18 +30,15 @@ set_welcome_content.handle()(handle_content)
 
 @set_welcome_content.handle()
 async def _(
-        event: GroupMessageEvent, 
+        event: AdapterGroupMessageEvent,
         content: str = ArgPlainText("content")
 ):
+    msg_type = ProtocolAdapter.get_msg_type(event)
+    msg_type_id = ProtocolAdapter.get_msg_type_id(event)
     ret_msg = ""
-    welcome_content = await CaptionsGroupsDBUtils.get_welcome_content(
-        type="group",
-        type_id=event.group_id)
+    welcome_content = DBPluginsCaptionsGroupsInfo.get_group_welcome_content_by_msg_type_id(msg_type, msg_type_id)
     if welcome_content:
         ret_msg = "【原群欢迎内容已被覆盖】\n"
-    await CaptionsGroupsDBUtils.set_welcome_content(
-        type="group",
-        type_id=event.group_id,
-        welcome_content=content)
+    DBPluginsCaptionsGroupsInfo.set_group_welcome_content(msg_type, msg_type_id, content)
     ret_msg += "已写入群欢迎内容"
     await set_welcome_content.finish(ret_msg)
