@@ -1,16 +1,14 @@
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterGroupMessageEvent
-from nonebot import on_command
+from nonebot import on_regex
 from plugins.common_plugins_function import white_list_handle
 from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
 from utils import group_only
 
-get_work_list = on_command(
-    "工作表", aliases={
-        "工资表",
-        "giaogiao表",
-        "gaugau表"},
+get_work_list = on_regex(
+    pattern=r"^(工作|工资|giaogiao|gaugau)表$",
     priority=5,
+    block=True
 )
 get_work_list.__doc__ = """工作表"""
 get_work_list.__help_type__ = None
