@@ -5,20 +5,18 @@ from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, ArgPlainText
 from nonebot import on_command
-from utils import group_only
-from plugins.common_plugins_function import white_list_handle
 from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
+from utils.rule import group_only
+from utils.permission import white_list_handle
 
 set_work_list = on_command(
     "设置工作表",
-    rule=to_me(),
+    rule=to_me() & group_only(),
     priority=5
 )
 set_work_list.__doc__ = """设置工作表"""
 set_work_list.__help_type__ = None
-
-set_work_list.handle()(white_list_handle("captions_groups"))
-set_work_list.handle()(group_only)
+set_work_list.handle(white_list_handle("captions_groups"))
 
 
 async def handle_url(

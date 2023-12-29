@@ -1,20 +1,19 @@
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterGroupMessageEvent
 from nonebot import on_regex
-from plugins.common_plugins_function import white_list_handle
 from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
-from utils import group_only
+from utils.rule import group_only
+from utils.permission import white_list_handle
 
 get_work_list = on_regex(
     pattern=r"^(工作|工资|giaogiao|gaugau)表$",
+    rule=group_only(),
     priority=5,
     block=True
 )
 get_work_list.__doc__ = """工作表"""
 get_work_list.__help_type__ = None
-
-get_work_list.handle()(white_list_handle("captions_groups"))
-get_work_list.handle()(group_only)
+get_work_list.handle("captions_groups")
 
 
 @get_work_list.handle()

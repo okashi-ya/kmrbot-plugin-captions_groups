@@ -1,12 +1,11 @@
 from nonebot import on_notice
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterBot, AdapterGroupBanNoticeEvent
-from plugins.common_plugins_function import white_list_handle
-from utils import group_only
+from utils.rule import group_only
+from utils.permission import white_list_handle
 
-group_ban_handler = on_notice(priority=5)
-group_ban_handler.handle()(white_list_handle("captions_groups"))
-group_ban_handler.handle()(group_only)
+group_ban_handler = on_notice(priority=5, rule=group_only)
+group_ban_handler.handle(white_list_handle("captions_groups"))
 
 
 @group_ban_handler.handle()
@@ -21,4 +20,4 @@ async def _(bot: AdapterBot, event: AdapterGroupBanNoticeEvent):
         ret_str = f"{ban_info['operator_user_name']}（{ban_info['operator_user_id']}）取出了" \
                   f"{ban_info['ban_user_name']}（{ban_info['ban_user_id']}）" \
                   f"的口球"
-    await group_ban_handler.finish(ret_str, chatType=event.chatType, peerUin=event.peerUin)
+    await group_ban_handler.finish(ret_str)

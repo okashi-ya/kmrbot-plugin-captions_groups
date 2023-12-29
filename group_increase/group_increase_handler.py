@@ -1,13 +1,12 @@
 from nonebot import on_notice
 from protocol_adapter.protocol_adapter import ProtocolAdapter
 from protocol_adapter.adapter_type import AdapterGroupIncreaseNoticeEvent
-from plugins.common_plugins_function import white_list_handle
-from utils import group_only
 from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
+from utils.rule import group_only
+from utils.permission import white_list_handle
 
-group_increase_handler = on_notice(priority=5)
-group_increase_handler.handle()(white_list_handle("captions_groups"))
-group_increase_handler.handle()(group_only)
+group_increase_handler = on_notice(priority=5, rule=group_only)
+group_increase_handler.handle(white_list_handle("captions_groups"))
 
 
 @group_increase_handler.handle()

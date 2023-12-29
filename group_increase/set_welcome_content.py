@@ -4,20 +4,18 @@ from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, ArgPlainText
 from nonebot import on_command
-from utils import group_only
-from plugins.common_plugins_function import white_list_handle
 from ..database.captions_groups import DBPluginsCaptionsGroupsInfo
+from utils.rule import group_only
+from utils.permission import white_list_handle
 
 set_welcome_content = on_command(
     "设置群欢迎内容",
     priority=5,
-    rule=to_me()
+    rule=to_me() & group_only()
 )
 set_welcome_content.__doc__ = """设置群欢迎内容"""
 set_welcome_content.__help_type__ = None
-
-set_welcome_content.handle()(white_list_handle("captions_groups"))
-set_welcome_content.handle()(group_only)
+set_welcome_content.handle(white_list_handle("captions_groups"))
 
 
 async def handle_content(
