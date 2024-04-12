@@ -1,11 +1,11 @@
 import copy
 import re
-from database.interface.db_impl_interface import DBImplInterface
+from database.interface.db_impl_interface import DBCacheImplInterface
 from database.db_manager import DBManager
 
 
 # B站翻译信息
-class DBPluginsCaptionsGroupsInfo(DBImplInterface):
+class DBPluginsCaptionsGroupsInfo(DBCacheImplInterface):
 
     """
     key: {msg_type}_{msg_type_id}
@@ -30,7 +30,7 @@ class DBPluginsCaptionsGroupsInfo(DBImplInterface):
         if data is None:
             data = copy.deepcopy(cls._default_value)
         data["work_list"] = work_list
-        cls.set_data(key, data)
+        cls.set_data_by_key(key, data)
 
     @classmethod
     def del_work_list(cls, msg_type, msg_type_id):
@@ -39,7 +39,7 @@ class DBPluginsCaptionsGroupsInfo(DBImplInterface):
         data = cls.get_data_by_key(key)
         if data is not None:
             data["work_list"] = ""
-        cls.set_data(key, data)
+        cls.set_data_by_key(key, data)
 
     @classmethod
     def get_work_list_by_msg_type_id(cls, msg_type, msg_type_id):
@@ -66,7 +66,7 @@ class DBPluginsCaptionsGroupsInfo(DBImplInterface):
         if data is None:
             data = copy.deepcopy(cls._default_value)
         data["group_welcome_content"] = group_welcome_content
-        cls.set_data(key, data)
+        cls.set_data_by_key(key, data)
 
     @classmethod
     def del_group_welcome_content(cls, msg_type, msg_type_id):
@@ -75,7 +75,7 @@ class DBPluginsCaptionsGroupsInfo(DBImplInterface):
         data = cls.get_data_by_key(key)
         if data is not None:
             data["group_welcome_content"] = ""
-        cls.set_data(key, data)
+        cls.set_data_by_key(key, data)
 
     @classmethod
     def get_group_welcome_content_by_msg_type_id(cls, msg_type, msg_type_id):
